@@ -46,6 +46,10 @@ target_link_libraries(<project_name>
 )
 ...
 ```
+And add the next `include` line into your code:
+```c++
+#include "coordinate_conversor.h"
+```
 <br/>
 
 ___
@@ -57,7 +61,7 @@ ___
 
 This will construct this class, if you have an object which is constantly moving you could use its coordinates *(latitude and longitude)* as the parameters in the constructor so, when you call `GPS_to_XY()` or `XY_to_GPS()`, the object's latitude and longitude will be taken as the origin. This does not affect `distance()` or `distances()`
 ```c++
-CoordinateConversor(double *latitude = nullptr, double *longitude = nullptr);
+Toreo::CoordinateConversor(double *latitude = nullptr, double *longitude = nullptr);
 ```
 
  &nbsp; **Arguments**
