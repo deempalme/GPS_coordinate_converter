@@ -46,6 +46,10 @@ target_link_libraries(<project_name>
 )
 ...
 ```
+And add the next `include` line into your code:
+```c++
+#include "coordinate_conversor.h"
+```
 <br/>
 
 ___
