@@ -1,8 +1,108 @@
 ![GPS Conversor](images/logo.png)<br/>
-GPS Coordinates converter using Azimuthal equidistant projection
+This is a GPS Coordinates converter that uses using Azimuthal equidistant projection.
 
 ## Azimuthal equidistant map projection
 
 The azimuthal equidistant map projection creates a map that puts points equidistant from the map's center in a circle surrounding it. It has the useful properties that all points on the map are at proportionately correct distances from the center point, and that all points on the map are at the correct azimuth (direction) from the center point. The most famous example is the flag of the United Nations which centers at the north pole. It is an interesting and complex projection that in the past was mainly used to create line drawings. Now, it can be done in realtime on a GPU in your web browser.
 
 You can see an interactive map [here](http://rogerallen.github.io/webgl/2014/01/27/azimuthal-equidistant-projection/), use the mouse to move center of the map projection.
+<br/><br/>
+
+___
+<br/>
+
+## Installation
+
+This library does not require any additional libray, you only need to add the files to your **libraries**' folder and add the following lines to your **CMakeLists.txt**:
+```Cmake
+# Tripe points (...) represent possible content that may 
+# already exist in your CMakeLists.txt
+...
+# Replace <gps_conversor_folder_path> with the actual folder path
+add_subdirectory(<gps_conversor_folder_path>)
+include_directories(${COORDINATE_DIRS})
+...
+# Replace <project_name> with the actual project name
+target_link_libraries(<project_name>
+  ...
+  ${COORDINATE_LIB}
+  ...
+)
+...
+```
+<br/>
+
+___
+<br/>
+
+## Public members
+
+### Constructor
+
+This will construct this class, if you have an object which is constantly moving you could use its coordinates *(latitude and longitude)* as the parameters in the constructor so, when you call `GPS_to_XY()` or `XY_to_GPS()`, the object's latitude and longitude will be taken as the origin. This does not affect `distance()` or `distances()`
+```c++
+CoordinateConversor(double *latitude = nullptr, double *longitude = nullptr);
+```
+
+ &nbsp; **Arguments**
+
+| Type | Name | Description |
+| --- | --- | --- |
+| [`double*`] | **latitude** | Latitude coordinate of the movable object. |
+| [`double*`] | **longitude** | Longitude coordinate of the movable object. |
+<br/>
+
+___
+<br/>
+
+### Converting from GPS coordinates to X and Y distances
+
+This function converts GPS **degree** coordinates to distance in meters from the **GPS position** to the **Object position** *(he object's position is the origin)* which was defined in the constructor.
+```c++
+Visualizer::pointXY GPS_to_XY(double latitude, double longitude);
+```
+
+**Mathematical formulas** are as follows:
+ * `x = longitude_to_meters - Object_longitude_to_meters`
+ * `y = latitude_to_meters - Object_latitude_to_meters`
+
+ &nbsp; **Arguments**
+
+| Type | Name | Description |
+| --- | --- | --- |
+| [`double*`] | **latitude** | Latitude coordinate to measure. |
+| [`double*`] | **longitude** | Longitude coordinate to measure. |
+
+ &nbsp; **Returns**<br/>
+ &nbsp; &nbsp; [`Visualizer::pointXY`] &nbsp; | &nbsp; Position in meters with coordinates **X** and **Y** relative to the map's center defined at the constructor. (see [Types](#type-definition) for more information about the `struct`).
+
+ &nbsp; **Errors**<br />
+ &nbsp; &nbsp; This will always return x = 0 and y = 0 if the *latitude* and *longitude* were not defined in the constructor.
+<br/>
+
+___
+<br/>
+
+### Converting from X and Y position to GPS coordinates
+
+This function converts **X** and **Y** position *(in meters)* into GPS **degree** coordinates. The X and Y distances must be relative to the Object, the **X axis** is a line pointing east and the **Y axis** is a line pointing towards north and center at the Object position (defined at the constructor).
+```c++
+Visualizer::pointLL XY_to_GPS(double x, double y);
+```
+
+**Mathematical formulas** are as follows:
+ * `latitude = to_GPS_coordinate(Object_latitude_to_meters + y)`
+ * `longitude = to_GPS_coordinate(Object_longitude_to_meters + x)`
+
+ &nbsp; **Arguments**
+
+| Type | Name | Description |
+| --- | --- | --- |
+| [`double*`] | **x** | Position **X** to measure relative to the object defined at the constructor. |
+| [`double*`] | **y** | Position **Y** to measure relative to the object defined at the constructor. |
+
+ &nbsp; **Returns**<br/>
+ &nbsp; &nbsp; [`Visualizer::pointLL`] &nbsp; | &nbsp; Coordinates **latitude** and **longitude**. (see [Types](#type-definition) for more information about the `struct`).
+
+ &nbsp; **Errors**<br />
+ &nbsp; &nbsp; This will always return `latitude = 0` and `longitude = 0` if the *latitude* and *longitude* were not defined in the constructor.
