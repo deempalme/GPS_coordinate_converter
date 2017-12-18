@@ -70,8 +70,8 @@ Visualizer::pointXY GPS_to_XY(double latitude, double longitude);
 
 | Type | Name | Description |
 | --- | --- | --- |
-| [`double*`] | **latitude** | Latitude coordinate to measure. |
-| [`double*`] | **longitude** | Longitude coordinate to measure. |
+| [`double`] | **latitude** | Latitude coordinate to measure. |
+| [`double`] | **longitude** | Longitude coordinate to measure. |
 
  &nbsp; **Returns**<br/>
  &nbsp; &nbsp; [`Visualizer::pointXY`] &nbsp; | &nbsp; Position in meters with coordinates **X** and **Y** relative to the map's center defined at the constructor. (see [Types](#type-definition) for more information about the `struct`).
@@ -98,11 +98,72 @@ Visualizer::pointLL XY_to_GPS(double x, double y);
 
 | Type | Name | Description |
 | --- | --- | --- |
-| [`double*`] | **x** | Position **X** to measure relative to the object defined at the constructor. |
-| [`double*`] | **y** | Position **Y** to measure relative to the object defined at the constructor. |
+| [`double`] | **x** | Position **X** to measure relative to the object defined at the constructor. |
+| [`double`] | **y** | Position **Y** to measure relative to the object defined at the constructor. |
 
  &nbsp; **Returns**<br/>
  &nbsp; &nbsp; [`Visualizer::pointLL`] &nbsp; | &nbsp; Coordinates **latitude** and **longitude**. (see [Types](#type-definition) for more information about the `struct`).
 
  &nbsp; **Errors**<br />
  &nbsp; &nbsp; This will always return `latitude = 0` and `longitude = 0` if the *latitude* and *longitude* were not defined in the constructor.
+<br/>
+
+___
+<br/>
+
+### Calculating the distance between two GPS coordinates
+
+This function calculates the **distance** between two GPS points, you must define the **start point** *(latitude, longitude)* and **end point** *(latitude, longitude)*.
+```c++
+double distance(double start_latitude, double start_longitude,
+                double end_latitude, double end_longitude);
+```
+
+ &nbsp; **Arguments**
+
+| Type | Name | Description |
+| --- | --- | --- |
+| [`double`] | **start_latitude** | Latitude of point 1. |
+| [`double`] | **start_longitude** | Longitude of point 1. |
+| [`double`] | **end_latitude** | Latitude of point 2. |
+| [`double`] | **end_longitude** | Longitude of point 2. |
+
+ &nbsp; **Returns**<br/>
+ &nbsp; &nbsp; [`double`] &nbsp; | &nbsp; Distance in meters from *start point* to *end point*.
+
+ &nbsp; **Errors**<br />
+ &nbsp; &nbsp; This will return strange values if you do not introduces proper GPS coordinates.
+<br/>
+
+___
+<br/>
+
+### Calculating the distance X and Y between two GPS coordinates
+
+This function calculates the **distance X** and **Y** between two GPS points, you must define a **start point** *(latitude, longitude)* and **end point** *(latitude, longitude)*.
+```c++
+Visualizer::pointXY distances(double start_latitude, double start_longitude,
+                              double end_latitude, double end_longitude);
+```
+
+ &nbsp; **Arguments**
+
+| Type | Name | Description |
+| --- | --- | --- |
+| [`double`] | **start_latitude** | Latitude of point 1. |
+| [`double`] | **start_longitude** | Longitude of point 1. |
+| [`double`] | **end_latitude** | Latitude of point 2. |
+| [`double`] | **end_longitude** | Longitude of point 2. |
+
+ &nbsp; **Returns**<br/>
+ &nbsp; &nbsp; [`Visualizer::pointXY`] &nbsp; | &nbsp; Distance in meters from *start point* to *end point* separated in **vector components**. (see [Types](#type-definition) for more information about the `struct`).
+
+ &nbsp; **Errors**<br />
+ &nbsp; &nbsp; This will return strange values if you do not introduces proper GPS coordinates.
+ <br/>
+ 
+ ___
+ <br/>
+ 
+ ## Type Definitions
+ 
