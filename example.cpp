@@ -25,6 +25,11 @@ int main(int argc, char *argv[]){
             << std::endl;
 
   // -------------------------------------------------------------------------------
+  // Changing the map center location
+  map_center_latitude = 50.0;
+  map_center_longitude = 6.0;
+
+  // -------------------------------------------------------------------------------
   // Converting from meters to coordinates (relative to the map center)
   Visualizer::pointLL point_2{conversor.XY_to_GPS(1000, 2000)};
   // Printing the values
