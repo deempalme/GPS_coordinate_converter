@@ -1,5 +1,4 @@
-![GPS Conversor](images/logo.png)<br/>
-This is a GPS Coordinates converter that uses using Azimuthal equidistant projection.
+<p align="center"><img src="images/logo.png" align="center" alt="GPS Conversor"></p>  
 
 ___
 
