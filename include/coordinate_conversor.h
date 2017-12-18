@@ -34,15 +34,15 @@
 namespace Visualizer {
   union pointXY{
     struct{
-      double x;
-      double y;
+      double x; // Position in meters at the X axis (Longitude axis)
+      double y; // Position in meters at the Y axis (Latitude axis)
     };
     double data[2];
   };
   union pointLL{
     struct{
-      double latitude;
-      double longitude;
+      double latitude;  // Latitude coordinate in degrees
+      double longitude; // Longitude coordinate in degrees
     };
     double data[2];
   };
@@ -62,9 +62,9 @@ namespace Toreo {
      * and longitude will be taken as the origin. This does not affect `distance()` or
      * `distances()`
      *
-     * **Parameters**
-     * {double*} latitude = latitude coordinate of the movable object
-     * {double*} longitude = longitude coordinate of the movable object
+     * **Arguments**
+     * {double*} latitude = Latitude coordinate of the movable object.
+     * {double*} longitude = Longitude coordinate of the movable object.
      *
      */
     CoordinateConversor(double *latitude = nullptr, double *longitude = nullptr);
@@ -76,12 +76,12 @@ namespace Toreo {
      * which was defined in the constructor.
      *
      * Mathematical formulas are as follows:
-     *  x = longitude_to_meters - Object_longitude_to_meters
-     *  y = latitude_to_meters - Object_latitude_to_meters
+     *  * `x = longitude_to_meters - Object_longitude_to_meters`
+     *  * `y = latitude_to_meters - Object_latitude_to_meters`
      *
-     * **Parameters**
-     * {double} latitude = latitude coordinate to measure
-     * {double} longitude = longitude coordinate to measure
+     * **Arguments**
+     * {double} latitude = Latitude coordinate to measure.
+     * {double} longitude = Longitude coordinate to measure.
      *
      * **Errors**
      * This will always return x = 0 and y = 0 if the *latitude and *longitude were not
@@ -98,15 +98,15 @@ namespace Toreo {
      * at the Object position (defined at the constructor).
      *
      * Mathematical formulas are as follows:
-     *  latitude = to_GPS_coordinate(Object_latitude_to_meters + y)
-     *  longitude = to_GPS_coordinate(Object_longitude_to_meters + x)
+     *  * `latitude = to_GPS_coordinate(Object_latitude_to_meters + y)`
+     *  * `longitude = to_GPS_coordinate(Object_longitude_to_meters + x)`
      *
-     * **Parameters**
-     * {double} x = position X to measure relative to the object defined at the constructor
-     * {double} y = position Y to measure relative to the object defined at the constructor
+     * **Arguments**
+     * {double} x = Position X to measure relative to the object defined at the constructor.
+     * {double} y = Position Y to measure relative to the object defined at the constructor.
      *
      * **Errors**
-     * This will always return x = 0 and y = 0 if the *latitude and *longitude were not
+     * This will always return `latitude = 0` and `longitude = 0` if the *latitude* and *longitude* were not
      * defined in the constructor.
      *
      */
@@ -117,14 +117,14 @@ namespace Toreo {
      * This function calculates the **distance** between two GPS points, you must define the
      * **start point** *(latitude, longitude)* and **end point** *(latitude, longitude)*.
      *
-     * **Parameters**
-     * {double} start_latitude = latitude of point 1
-     * {double} start_longitude = longitude of point 1
-     * {double} end_latitude = latitude of point 2
-     * {double} end_longitude = longitude of point 2
+     * **Arguments**
+     * {double} start_latitude = Latitude of point 1.
+     * {double} start_longitude = Longitude of point 1.
+     * {double} end_latitude = Latitude of point 2.
+     * {double} end_longitude = Longitude of point 2.
      *
      * **Errors**
-     * This will return extrange values if you do not introduces proper GPS coordinates.
+     * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
     double distance(double start_latitude, double start_longitude,
@@ -136,14 +136,14 @@ namespace Toreo {
      * must define a **start point** *(latitude, longitude)* and **end point** *(latitude,
      * longitude)*.
      *
-     * **Parameters**
+     * **Arguments**
      * {double} start_latitude = latitude of point 1
      * {double} start_longitude = longitude of point 1
      * {double} end_latitude = latitude of point 2
      * {double} end_longitude = longitude of point 2
      *
      * **Errors**
-     * This will return extrange values if you do not introduces proper GPS coordinates.
+     * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
     Visualizer::pointXY distances(double start_latitude, double start_longitude,
