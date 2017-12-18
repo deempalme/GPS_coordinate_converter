@@ -25,8 +25,8 @@ namespace Toreo {
       double c{acos(B * D + A * C * E)};
       double k{c / sin(c)};
 
-      value.x = k * C * sin(longitude - longitudeRAD) * 6378137.0;
-      value.y = k * (A * D - B * C * E) * 6378137.0;
+      value.x = k * C * sin(longitude - longitudeRAD) * EARTH_RADIUS;
+      value.y = k * (A * D - B * C * E) * EARTH_RADIUS;
 
       if(value.x != value.x) value.x = 0.0;
       if(value.y != value.y) value.y = 0.0;
@@ -38,8 +38,8 @@ namespace Toreo {
     Visualizer::pointLL value = { 0.0, 0.0 };
 
     if(latitude_ && longitude_){
-      x /= 6378137.0;
-      y /= 6378137.0;
+      x /= EARTH_RADIUS;
+      y /= EARTH_RADIUS;
 
       double c{sqrt(x * x + y * y)};
       double latitudeRAD{*latitude_ * toRADIANS};
@@ -50,9 +50,9 @@ namespace Toreo {
 
       value.latitude = asin(D * B + (y * C * A) / c) * toDEGREES;
 
-      if(*latitude_ == 90.0)
+      if(*latitude_ >= 90.0)
         value.longitude = *longitude_ + atan(-x/y) * toDEGREES;
-      else if(*latitude_ == -90.0)
+      else if(*latitude_ <= -90.0)
         value.longitude = *longitude_ + atan(x/y) * toDEGREES;
       else
         value.longitude = *longitude_ + atan((x * C)/(c * A * D - y * B * C)) * toDEGREES;
@@ -76,8 +76,8 @@ namespace Toreo {
     double c{acos(B * D + A * C * E)};
     double k{c / sin(c)};
 
-    double x{k * C * sin(end_longitude - start_longitude) * 6378137.0};
-    double y{k * (A * D - B * C * E) * 6378137.0};
+    double x{k * C * sin(end_longitude - start_longitude) * EARTH_RADIUS};
+    double y{k * (A * D - B * C * E) * EARTH_RADIUS};
 
     if(x != x) x = 0.0;
     if(y != y) y = 0.0;
@@ -102,8 +102,8 @@ namespace Toreo {
     double c{acos(B * D + A * C * E)};
     double k{c / sin(c)};
 
-    value.x = k * C * sin(end_longitude - start_longitude) * 6378137.0;
-    value.y = k * (A * D - B * C * E) * 6378137.0;
+    value.x = k * C * sin(end_longitude - start_longitude) * EARTH_RADIUS;
+    value.y = k * (A * D - B * C * E) * EARTH_RADIUS;
 
     if(value.x != value.x) value.x = 0.0;
     if(value.y != value.y) value.y = 0.0;

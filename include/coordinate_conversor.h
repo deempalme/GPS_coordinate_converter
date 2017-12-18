@@ -19,6 +19,8 @@
 // 3/2 * PI
 #define _3PI2               4.71238898038f
 
+#define EARTH_RADIUS        6378137.0
+
 // Radians to degrees
 #define toDEGREES           57.2957795131f
 // Degrees to radians
