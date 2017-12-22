@@ -1,57 +1,33 @@
 #ifndef TORERO_COORDINATE_CONVERSOR_H
 #define TORERO_COORDINATE_CONVERSOR_H
 
-#include <math.h>
-
-#ifndef C_C_M
-#define C_C_M
-#define _PI                 3.14159265359f
-// 2 * PI
-#define _2PI                6.28318530718f
-// PI / 2
-#define _PI2                1.57079632679f
-// PI / 3
-#define _PI3                1.047197551f
-// 4 * PI / 3
-#define _4PI3               4.188790205f
-// PI / 4
-#define _PI4                0.78539816339f
-// 3/2 * PI
-#define _3PI2               4.71238898038f
-
-#define EARTH_RADIUS        6378137.0
-
-// Radians to degrees
-#define toDEGREES           57.2957795131f
-// Degrees to radians
-#define toRADIANS           0.01745329252f
-// Meters per hour to kilometers per hour
-#define toKMPH              3.6f
-// Gravity constant acceleration on earth
-#define GRAVITY             9.81f
-#endif
+#include <cmath>
 
 #ifndef C_C_S
 #define C_C_S
 namespace Visualizer {
+  template<typename T>
   union pointXY{
     struct{
-      double x; // Position in meters at the X axis (Longitude axis)
-      double y; // Position in meters at the Y axis (Latitude axis)
+      T x; // Position in meters at the X axis (Longitude axis)
+      T y; // Position in meters at the Y axis (Latitude axis)
     };
-    double data[2];
+    T data[2];
   };
+
+  template<typename T>
   union pointLL{
     struct{
-      double latitude;  // Latitude coordinate in degrees
-      double longitude; // Longitude coordinate in degrees
+      T latitude;  // Latitude coordinate in degrees
+      T longitude; // Longitude coordinate in degrees
     };
-    double data[2];
+    T data[2];
   };
 }
 #endif
 
 namespace Toreo {
+  template<typename T>
   class CoordinateConversor
   {
   public:
@@ -65,11 +41,19 @@ namespace Toreo {
      * `distances()`
      *
      * **Arguments**
-     * {double*} latitude = Latitude coordinate of the movable object.
-     * {double*} longitude = Longitude coordinate of the movable object.
+     * {T*} latitude = Latitude coordinate of the movable object.
+     * {T*} longitude = Longitude coordinate of the movable object.
      *
      */
-    CoordinateConversor(double *latitude = nullptr, double *longitude = nullptr);
+    CoordinateConversor(T *latitude = nullptr, T *longitude = nullptr) :
+      latitude_(latitude),
+      longitude_(longitude),
+      null_(static_cast<T>(0.0)),
+      ninety_(static_cast<T>(ninety_)),
+      to_radians_(static_cast<T>(0.01745329252)),
+      to_degrees_(static_cast<T>(57.2957795131)),
+      earth_radius_(static_cast<T>(6378137.0))
+    {}
     /***
      * ### Converting from GPS coordinates to X and Y distances
      *
@@ -82,15 +66,41 @@ namespace Toreo {
      *  * `y = latitude_to_meters - Object_latitude_to_meters`
      *
      * **Arguments**
-     * {double} latitude = Latitude coordinate to measure.
-     * {double} longitude = Longitude coordinate to measure.
+     * {T} latitude = Latitude coordinate to measure.
+     * {T} longitude = Longitude coordinate to measure.
      *
      * **Errors**
      * This will always return x = 0 and y = 0 if the *latitude and *longitude were not
      * defined in the constructor.
      *
      */
-    Visualizer::pointXY GPS_to_XY(double latitude, double longitude);
+    Visualizer::pointXY<T> GPS_to_XY(T latitude, T longitude){
+      Visualizer::pointXY<T> value = { null_, null_ };
+
+      if(latitude_ && longitude_){
+        latitude  *= to_radians_;
+        longitude *= to_radians_;
+
+        T latitudeRAD{*latitude_ * to_radians_};
+        T longitudeRAD{*longitude_ * to_radians_};
+
+        T A{std::cos(latitudeRAD)};
+        T B{std::sin(latitudeRAD)};
+        T C{std::cos(latitude)};
+        T D{std::sin(latitude)};
+        T E{std::cos(longitude - longitudeRAD)};
+
+        T c{std::acos(B * D + A * C * E)};
+        T k{c / std::sin(c)};
+
+        value.x = k * C * std::sin(longitude - longitudeRAD) * earth_radius_;
+        value.y = k * (A * D - B * C * E) * earth_radius_;
+
+        if(value.x != value.x) value.x = null_;
+        if(value.y != value.y) value.y = null_;
+      }
+      return value;
+    }
     /***
      * ### Converting from X and Y position to GPS coordinates
      * 
@@ -104,15 +114,39 @@ namespace Toreo {
      *  * `longitude = to_GPS_coordinate(Object_longitude_to_meters + x)`
      *
      * **Arguments**
-     * {double} x = Position X to measure relative to the object defined at the constructor.
-     * {double} y = Position Y to measure relative to the object defined at the constructor.
+     * {T} x = Position X to measure relative to the object defined at the constructor.
+     * {T} y = Position Y to measure relative to the object defined at the constructor.
      *
      * **Errors**
      * This will always return `latitude = 0` and `longitude = 0` if the *latitude* and *longitude* were not
      * defined in the constructor.
      *
      */
-    Visualizer::pointLL XY_to_GPS(double x, double y);
+    Visualizer::pointLL<T> XY_to_GPS(T x, T y){
+      Visualizer::pointLL<T> value = { null_, null_ };
+
+      if(latitude_ && longitude_){
+        x /= earth_radius_;
+        y /= earth_radius_;
+
+        T c{std::sqrt(x * x + y * y)};
+        T latitudeRAD{*latitude_ * to_radians_};
+        T A{std::cos(latitudeRAD)};
+        T B{std::sin(latitudeRAD)};
+        T C{std::sin(c)};
+        T D{std::cos(c)};
+
+        value.latitude = std::asin(D * B + (y * C * A) / c) * to_degrees_;
+
+        if(*latitude_ >= ninety_)
+          value.longitude = *longitude_ + std::atan(-x/y) * to_degrees_;
+        else if(*latitude_ <= -ninety_)
+          value.longitude = *longitude_ + std::atan(x/y) * to_degrees_;
+        else
+          value.longitude = *longitude_ + std::atan((x * C)/(c * A * D - y * B * C)) * to_degrees_;
+      }
+      return value;
+    }
     /***
      * ### Calculating the distance between two GPS coordinates
      * 
@@ -120,17 +154,39 @@ namespace Toreo {
      * **start point** *(latitude, longitude)* and **end point** *(latitude, longitude)*.
      *
      * **Arguments**
-     * {double} start_latitude = Latitude of point 1.
-     * {double} start_longitude = Longitude of point 1.
-     * {double} end_latitude = Latitude of point 2.
-     * {double} end_longitude = Longitude of point 2.
+     * {T} start_latitude = Latitude of point 1.
+     * {T} start_longitude = Longitude of point 1.
+     * {T} end_latitude = Latitude of point 2.
+     * {T} end_longitude = Longitude of point 2.
      *
      * **Errors**
      * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
-    double distance(double start_latitude, double start_longitude,
-                    double end_latitude, double end_longitude);
+    T distance(T start_latitude, T start_longitude,
+               T end_latitude, T end_longitude){
+      start_latitude  *= to_radians_;
+      start_longitude *= to_radians_;
+      end_latitude    *= to_radians_;
+      end_longitude   *= to_radians_;
+
+      T A{std::cos(start_latitude)};
+      T B{std::sin(start_latitude)};
+      T C{std::cos(end_latitude)};
+      T D{std::sin(end_latitude)};
+      T E{std::cos(end_longitude - start_longitude)};
+
+      T c{std::acos(B * D + A * C * E)};
+      T k{c / std::sin(c)};
+
+      T x{k * C * std::sin(end_longitude - start_longitude) * earth_radius_};
+      T y{k * (A * D - B * C * E) * earth_radius_};
+
+      if(x != x) x = null_;
+      if(y != y) y = null_;
+
+      return T(std::sqrt(x * x + y * y));
+    }
     /***
      * ### Calculating the distance X and Y between two GPS coordinates
      *
@@ -139,21 +195,50 @@ namespace Toreo {
      * longitude)*.
      *
      * **Arguments**
-     * {double} start_latitude = latitude of point 1
-     * {double} start_longitude = longitude of point 1
-     * {double} end_latitude = latitude of point 2
-     * {double} end_longitude = longitude of point 2
+     * {T} start_latitude = latitude of point 1
+     * {T} start_longitude = longitude of point 1
+     * {T} end_latitude = latitude of point 2
+     * {T} end_longitude = longitude of point 2
      *
      * **Errors**
      * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
-    Visualizer::pointXY distances(double start_latitude, double start_longitude,
-                                  double end_latitude, double end_longitude);
+    Visualizer::pointXY<T> distances(T start_latitude, T start_longitude,
+                                     T end_latitude, T end_longitude){
+      Visualizer::pointXY<T> value = { null_, null_ };
+      start_latitude  *= to_radians_;
+      start_longitude *= to_radians_;
+      end_latitude    *= to_radians_;
+      end_longitude   *= to_radians_;
+
+      T A{std::cos(start_latitude)};
+      T B{std::sin(start_latitude)};
+      T C{std::cos(end_latitude)};
+      T D{std::sin(end_latitude)};
+      T E{std::cos(end_longitude - start_longitude)};
+
+      T c{std::acos(B * D + A * C * E)};
+      T k{c / std::sin(c)};
+
+      value.x = k * C * std::sin(end_longitude - start_longitude) * earth_radius_;
+      value.y = k * (A * D - B * C * E) * earth_radius_;
+
+      if(value.x != value.x) value.x = null_;
+      if(value.y != value.y) value.y = null_;
+
+      return value;
+    }
 
   private:
-    double *latitude_, *longitude_;
+    T *latitude_, *longitude_;
+    T null_, ninety_;
+    T to_radians_, earth_radius_, to_degrees_;
   };
+
+  typedef CoordinateConversor<float> CoordinateConversorFloat;
+  typedef CoordinateConversor<double> CoordinateConversorDouble;
+  typedef CoordinateConversor<long double> CoordinateConversorLong;
 }
 
 #endif // TORERO_COORDINATE_CONVERSOR_H

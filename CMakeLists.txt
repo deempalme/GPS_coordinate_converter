@@ -24,5 +24,6 @@ set(COORDINATE_LIB ${COORDINATE_NAME} CACHE INTERNAL "")
 #add every file to the executable
 add_library(${COORDINATE_NAME}
   include/coordinate_conversor.h
-  src/coordinate_conversor.cpp
 )
+
+set_target_properties(${COORDINATE_NAME} PROPERTIES LINKER_LANGUAGE CXX)
