@@ -49,7 +49,7 @@ namespace Toreo {
       latitude_(latitude),
       longitude_(longitude),
       null_(static_cast<T>(0.0)),
-      ninety_(static_cast<T>(ninety_)),
+      ninety_(static_cast<T>(90.0)),
       to_radians_(static_cast<T>(0.01745329252)),
       to_degrees_(static_cast<T>(57.2957795131)),
       earth_radius_(static_cast<T>(6378137.0))
