@@ -15,13 +15,12 @@ namespace Visualizer {
     T data[2];
   };
 
-  template<typename T>
   union pointLL{
     struct{
-      T latitude;  // Latitude coordinate in degrees
-      T longitude; // Longitude coordinate in degrees
+      double latitude;  // Latitude coordinate in degrees
+      double longitude; // Longitude coordinate in degrees
     };
-    T data[2];
+    double data[2];
   };
 }
 #endif
@@ -41,19 +40,56 @@ namespace Toreo {
      * `distances()`
      *
      * **Arguments**
-     * {T*} latitude = Latitude coordinate of the movable object.
-     * {T*} longitude = Longitude coordinate of the movable object.
+     * {double*} latitude = Latitude coordinate of the movable object.
+     * {double*} longitude = Longitude coordinate of the movable object.
      *
      */
-    CoordinateConversor(T *latitude = nullptr, T *longitude = nullptr) :
+    CoordinateConversor(double *latitude = nullptr, double *longitude = nullptr) :
       latitude_(latitude),
       longitude_(longitude),
       null_(static_cast<T>(0.0)),
-      ninety_(static_cast<T>(90.0)),
-      to_radians_(static_cast<T>(0.01745329252)),
-      to_degrees_(static_cast<T>(57.2957795131)),
-      earth_radius_(static_cast<T>(6378137.0))
+      to_radians_(0.01745329252),
+      to_degrees_(57.2957795131),
+      earth_radius_(6378137.0)
     {}
+    /***
+     * ### Calculating the distance from movable object to the map's origin
+     *
+     * This function calculates the distance from the **movable object** defined at the
+     * **constructor** to the **map's origin** (*latitude* and *longitude* equal to *zero*).
+     *
+     * **Returns**
+     * {Visualizer::pointXY<T>} Position in meters on **X** and **Y** axes relative to the
+     * **map's origin** (*latitude* and *longitude* equal to *zero*). (see [Types](#D)
+     * for more information about the `struct`).
+     *
+     * **Errors**
+     * This will always return x = 0 and y = 0 if the *latitude and *longitude were not
+     * defined in the constructor.
+     *
+     */
+    Visualizer::pointXY<T> GPS_to_origin(){
+      Visualizer::pointXY<T> value = { null_, null_ };
+
+      if(latitude_ && longitude_){
+        const double latitudeRAD{*latitude_ * to_radians_};
+        const double longitudeRAD{*longitude_ * to_radians_};
+
+        const double C{std::cos(latitudeRAD)};
+        const double D{std::sin(latitudeRAD)};
+        const double E{std::cos(longitudeRAD)};
+
+        const double c{std::acos(C * E)};
+        const double k{c / std::sin(c)};
+
+        value.x = static_cast<T>(k * C * E * earth_radius_);
+        value.y = static_cast<T>(k * D * earth_radius_);
+
+        if(value.x != value.x) value.x = null_;
+        if(value.y != value.y) value.y = null_;
+      }
+      return value;
+    }
     /***
      * ### Converting from GPS coordinates to X and Y distances
      *
@@ -66,35 +102,40 @@ namespace Toreo {
      *  * `y = latitude_to_meters - Object_latitude_to_meters`
      *
      * **Arguments**
-     * {T} latitude = Latitude coordinate to measure.
-     * {T} longitude = Longitude coordinate to measure.
+     * {double} latitude = Latitude coordinate to measure.
+     * {double} longitude = Longitude coordinate to measure.
+     *
+     * **Returns**
+     * {Visualizer::pointXY<T>} Position in meters on **X** and **Y** axes relative to the
+     * **map's center** defined at the constructor. (see [Types](#D) for more information
+     * about the `struct`).
      *
      * **Errors**
      * This will always return x = 0 and y = 0 if the *latitude and *longitude were not
      * defined in the constructor.
      *
      */
-    Visualizer::pointXY<T> GPS_to_XY(T latitude, T longitude){
+    Visualizer::pointXY<T> GPS_to_XY(double latitude, double longitude){
       Visualizer::pointXY<T> value = { null_, null_ };
 
       if(latitude_ && longitude_){
         latitude  *= to_radians_;
         longitude *= to_radians_;
 
-        T latitudeRAD{*latitude_ * to_radians_};
-        T longitudeRAD{*longitude_ * to_radians_};
+        const double latitudeRAD{*latitude_ * to_radians_};
+        const double longitudeRAD{*longitude_ * to_radians_};
 
-        T A{std::cos(latitudeRAD)};
-        T B{std::sin(latitudeRAD)};
-        T C{std::cos(latitude)};
-        T D{std::sin(latitude)};
-        T E{std::cos(longitude - longitudeRAD)};
+        const double A{std::cos(latitudeRAD)};
+        const double B{std::sin(latitudeRAD)};
+        const double C{std::cos(latitude)};
+        const double D{std::sin(latitude)};
+        const double E{std::cos(longitude - longitudeRAD)};
 
-        T c{std::acos(B * D + A * C * E)};
-        T k{c / std::sin(c)};
+        const double c{std::acos(B * D + A * C * E)};
+        const double k{c / std::sin(c)};
 
-        value.x = k * C * std::sin(longitude - longitudeRAD) * earth_radius_;
-        value.y = k * (A * D - B * C * E) * earth_radius_;
+        value.x = static_cast<T>(k * C * std::sin(longitude - longitudeRAD) * earth_radius_);
+        value.y = static_cast<T>(k * (A * D - B * C * E) * earth_radius_);
 
         if(value.x != value.x) value.x = null_;
         if(value.y != value.y) value.y = null_;
@@ -117,33 +158,37 @@ namespace Toreo {
      * {T} x = Position X to measure relative to the object defined at the constructor.
      * {T} y = Position Y to measure relative to the object defined at the constructor.
      *
+     * **Returns**
+     * {Visualizer::pointLL} Coordinates **latitude** and **longitude**. (see [Types](#D)
+     * for more information about the `struct`).
+     *
      * **Errors**
      * This will always return `latitude = 0` and `longitude = 0` if the *latitude* and *longitude* were not
      * defined in the constructor.
      *
      */
-    Visualizer::pointLL<T> XY_to_GPS(T x, T y){
-      Visualizer::pointLL<T> value = { null_, null_ };
+    Visualizer::pointLL XY_to_GPS(T x, T y){
+      Visualizer::pointLL value = { 0.0, 0.0 };
 
       if(latitude_ && longitude_){
-        x /= earth_radius_;
-        y /= earth_radius_;
+        const double x2{static_cast<double>(x)/earth_radius_};
+        const double y2{static_cast<double>(y)/earth_radius_};
 
-        T c{std::sqrt(x * x + y * y)};
-        T latitudeRAD{*latitude_ * to_radians_};
-        T A{std::cos(latitudeRAD)};
-        T B{std::sin(latitudeRAD)};
-        T C{std::sin(c)};
-        T D{std::cos(c)};
+        const double c{std::sqrt(x2 * x2 + y2 * y2)};
+        const double latitudeRAD{*latitude_ * to_radians_};
+        const double A{std::cos(latitudeRAD)};
+        const double B{std::sin(latitudeRAD)};
+        const double C{std::sin(c)};
+        const double D{std::cos(c)};
 
-        value.latitude = std::asin(D * B + (y * C * A) / c) * to_degrees_;
+        value.latitude = std::asin(D * B + (y2 * C * A) / c) * to_degrees_;
 
-        if(*latitude_ >= ninety_)
-          value.longitude = *longitude_ + std::atan(-x/y) * to_degrees_;
-        else if(*latitude_ <= -ninety_)
-          value.longitude = *longitude_ + std::atan(x/y) * to_degrees_;
+        if(*latitude_ >= 90.0)
+          value.longitude = *longitude_ + std::atan(-x2/y2) * to_degrees_;
+        else if(*latitude_ <= -90.0)
+          value.longitude = *longitude_ + std::atan(x2/y2) * to_degrees_;
         else
-          value.longitude = *longitude_ + std::atan((x * C)/(c * A * D - y * B * C)) * to_degrees_;
+          value.longitude = *longitude_ + std::atan((x2 * C)/(c * A * D - y2 * B * C)) * to_degrees_;
       }
       return value;
     }
@@ -154,33 +199,36 @@ namespace Toreo {
      * **start point** *(latitude, longitude)* and **end point** *(latitude, longitude)*.
      *
      * **Arguments**
-     * {T} start_latitude = Latitude of point 1.
-     * {T} start_longitude = Longitude of point 1.
-     * {T} end_latitude = Latitude of point 2.
-     * {T} end_longitude = Longitude of point 2.
+     * {double} start_latitude = Latitude of point 1.
+     * {double} start_longitude = Longitude of point 1.
+     * {double} end_latitude = Latitude of point 2.
+     * {double} end_longitude = Longitude of point 2.
+     *
+     * **Returns**
+     * {T} Distance in meters from *start point* to *end point*.
      *
      * **Errors**
      * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
-    T distance(T start_latitude, T start_longitude,
-               T end_latitude, T end_longitude){
+    T distance(double start_latitude, double start_longitude,
+               double end_latitude, double end_longitude){
       start_latitude  *= to_radians_;
       start_longitude *= to_radians_;
       end_latitude    *= to_radians_;
       end_longitude   *= to_radians_;
 
-      T A{std::cos(start_latitude)};
-      T B{std::sin(start_latitude)};
-      T C{std::cos(end_latitude)};
-      T D{std::sin(end_latitude)};
-      T E{std::cos(end_longitude - start_longitude)};
+      const double A{std::cos(start_latitude)};
+      const double B{std::sin(start_latitude)};
+      const double C{std::cos(end_latitude)};
+      const double D{std::sin(end_latitude)};
+      const double E{std::cos(end_longitude - start_longitude)};
 
-      T c{std::acos(B * D + A * C * E)};
-      T k{c / std::sin(c)};
+      const double c{std::acos(B * D + A * C * E)};
+      const double k{c / std::sin(c)};
 
-      T x{k * C * std::sin(end_longitude - start_longitude) * earth_radius_};
-      T y{k * (A * D - B * C * E) * earth_radius_};
+      T x{static_cast<T>(k * C * std::sin(end_longitude - start_longitude) * earth_radius_)};
+      T y{static_cast<T>(k * (A * D - B * C * E) * earth_radius_)};
 
       if(x != x) x = null_;
       if(y != y) y = null_;
@@ -195,34 +243,39 @@ namespace Toreo {
      * longitude)*.
      *
      * **Arguments**
-     * {T} start_latitude = latitude of point 1
-     * {T} start_longitude = longitude of point 1
-     * {T} end_latitude = latitude of point 2
-     * {T} end_longitude = longitude of point 2
+     * {double} start_latitude = latitude of point 1
+     * {double} start_longitude = longitude of point 1
+     * {double} end_latitude = latitude of point 2
+     * {double} end_longitude = longitude of point 2
+     *
+     * **Returns**
+     * {Visualizer::pointXY<T>} Distance in meters from *start point* to *end point*
+     * separated in **vector components**. (see [Types](#D) for more information
+     * about the `struct`).
      *
      * **Errors**
      * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
-    Visualizer::pointXY<T> distances(T start_latitude, T start_longitude,
-                                     T end_latitude, T end_longitude){
+    Visualizer::pointXY<T> distances(double start_latitude, double start_longitude,
+                                     double end_latitude, double end_longitude){
       Visualizer::pointXY<T> value = { null_, null_ };
       start_latitude  *= to_radians_;
       start_longitude *= to_radians_;
       end_latitude    *= to_radians_;
       end_longitude   *= to_radians_;
 
-      T A{std::cos(start_latitude)};
-      T B{std::sin(start_latitude)};
-      T C{std::cos(end_latitude)};
-      T D{std::sin(end_latitude)};
-      T E{std::cos(end_longitude - start_longitude)};
+      const double A{std::cos(start_latitude)};
+      const double B{std::sin(start_latitude)};
+      const double C{std::cos(end_latitude)};
+      const double D{std::sin(end_latitude)};
+      const double E{std::cos(end_longitude - start_longitude)};
 
-      T c{std::acos(B * D + A * C * E)};
-      T k{c / std::sin(c)};
+      const double c{std::acos(B * D + A * C * E)};
+      const double k{c / std::sin(c)};
 
-      value.x = k * C * std::sin(end_longitude - start_longitude) * earth_radius_;
-      value.y = k * (A * D - B * C * E) * earth_radius_;
+      value.x = static_cast<T>(k * C * std::sin(end_longitude - start_longitude) * earth_radius_);
+      value.y = static_cast<T>(k * (A * D - B * C * E) * earth_radius_);
 
       if(value.x != value.x) value.x = null_;
       if(value.y != value.y) value.y = null_;
@@ -231,9 +284,9 @@ namespace Toreo {
     }
 
   private:
-    T *latitude_, *longitude_;
-    T null_, ninety_;
-    T to_radians_, earth_radius_, to_degrees_;
+    double *latitude_, *longitude_;
+    T null_;
+    double to_radians_, earth_radius_, to_degrees_;
   };
 
   typedef CoordinateConversor<float> CoordinateConversorFloat;
