@@ -6,6 +6,7 @@ namespace Toreo {
     latitude_(latitude),
     longitude_(longitude),
     null_(static_cast<T>(0.0)),
+    ninety_(static_cast<T>(90.0)),
     to_radians_(static_cast<T>(0.01745329252)),
     to_degrees_(static_cast<T>(57.2957795131)),
     earth_radius_(static_cast<T>(6378137.0))
@@ -66,7 +67,7 @@ namespace Toreo {
 
   template<typename T>
   Visualizer::pointLL<T> CoordinateConversor<T>::XY_to_GPS(T x, T y){
-    Visualizer::pointLL<T> value = { 0.0, 0.0 };
+    Visualizer::pointLL<T> value = { null_, null_ };
 
     if(latitude_ && longitude_){
       const T x2{x/earth_radius_};
@@ -81,9 +82,9 @@ namespace Toreo {
 
       value.latitude = std::asin(D * B + (y2 * C * A) / c) * to_degrees_;
 
-      if(*latitude_ >= 90.0)
+      if(*latitude_ >= ninety_)
         value.longitude = *longitude_ + std::atan(-x2/y2) * to_degrees_;
-      else if(*latitude_ <= -90.0)
+      else if(*latitude_ <= -ninety_)
         value.longitude = *longitude_ + std::atan(x2/y2) * to_degrees_;
       else
         value.longitude = *longitude_ + std::atan((x2 * C)/(c * A * D - y2 * B * C)) * to_degrees_;

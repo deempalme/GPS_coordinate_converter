@@ -242,13 +242,13 @@ Example:
 
 ```c++
 // Use this:
-float map_center_latitude{0.0};
-float map_center_longitude{0.0};
+float map_center_latitude{0.0f};
+float map_center_longitude{0.0f};
 Toreo::CoordinateConversotFloat gps_conversor(&map_center_latitude, &map_center_longitude);
 
 // Instead of this:
-float map_center_latitude{0.0};
-float map_center_longitude{0.0};
+float map_center_latitude{0.0f};
+float map_center_longitude{0.0f};
 Toreo::CoordinateConversot<float> gps_conversor(&map_center_latitude, &map_center_longitude);
 ```
 

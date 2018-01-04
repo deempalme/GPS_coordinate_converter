@@ -162,7 +162,7 @@ namespace Toreo {
                                      T end_latitude, T end_longitude);
   private:
     T *latitude_, *longitude_;
-    T null_;
+    T null_, ninety_;
     T to_radians_, earth_radius_, to_degrees_;
   };
 
