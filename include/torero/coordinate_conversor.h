@@ -15,12 +15,13 @@ namespace Visualizer {
     T data[2];
   };
 
+  template<typename T>
   union pointLL{
     struct{
-      double latitude;  // Latitude coordinate in degrees
-      double longitude; // Longitude coordinate in degrees
+      T latitude;  // Latitude coordinate in degrees
+      T longitude; // Longitude coordinate in degrees
     };
-    double data[2];
+    T data[2];
   };
 }
 #endif
@@ -40,11 +41,11 @@ namespace Toreo {
      * `distances()`
      *
      * **Arguments**
-     * {double*} latitude = Latitude coordinate of the movable object.
-     * {double*} longitude = Longitude coordinate of the movable object.
+     * {T*} latitude = Latitude coordinate of the movable object.
+     * {T*} longitude = Longitude coordinate of the movable object.
      *
      */
-    CoordinateConversor(double *latitude = nullptr, double *longitude = nullptr);
+    CoordinateConversor(T *latitude = nullptr, T *longitude = nullptr);
     /***
      * ### Calculating the distance from movable object to the map's origin
      *
@@ -74,8 +75,8 @@ namespace Toreo {
      *  * `y = latitude_to_meters - Object_latitude_to_meters`
      *
      * **Arguments**
-     * {double} latitude = Latitude coordinate to measure.
-     * {double} longitude = Longitude coordinate to measure.
+     * {T} latitude = Latitude coordinate to measure.
+     * {T} longitude = Longitude coordinate to measure.
      *
      * **Returns**
      * {Visualizer::pointXY<T>} Position in meters on **X** and **Y** axes relative to the
@@ -87,7 +88,7 @@ namespace Toreo {
      * defined in the constructor.
      *
      */
-    Visualizer::pointXY<T> GPS_to_XY(double latitude, double longitude);
+    Visualizer::pointXY<T> GPS_to_XY(T latitude, T longitude);
     /***
      * ### Converting from X and Y position to GPS coordinates
      * 
@@ -105,7 +106,7 @@ namespace Toreo {
      * {T} y = Position Y to measure relative to the object defined at the constructor.
      *
      * **Returns**
-     * {Visualizer::pointLL} Coordinates **latitude** and **longitude**. (see [Types](#D)
+     * {Visualizer::pointLL<T>} Coordinates **latitude** and **longitude**. (see [Types](#D)
      * for more information about the `struct`).
      *
      * **Errors**
@@ -113,7 +114,7 @@ namespace Toreo {
      * defined in the constructor.
      *
      */
-    Visualizer::pointLL XY_to_GPS(T x, T y);
+    Visualizer::pointLL<T> XY_to_GPS(T x, T y);
     /***
      * ### Calculating the distance between two GPS coordinates
      * 
@@ -121,10 +122,10 @@ namespace Toreo {
      * **start point** *(latitude, longitude)* and **end point** *(latitude, longitude)*.
      *
      * **Arguments**
-     * {double} start_latitude = Latitude of point 1.
-     * {double} start_longitude = Longitude of point 1.
-     * {double} end_latitude = Latitude of point 2.
-     * {double} end_longitude = Longitude of point 2.
+     * {T} start_latitude = Latitude of point 1.
+     * {T} start_longitude = Longitude of point 1.
+     * {T} end_latitude = Latitude of point 2.
+     * {T} end_longitude = Longitude of point 2.
      *
      * **Returns**
      * {T} Distance in meters from *start point* to *end point*.
@@ -133,8 +134,8 @@ namespace Toreo {
      * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
-    T distance(double start_latitude, double start_longitude,
-               double end_latitude, double end_longitude);
+    T distance(T start_latitude, T start_longitude,
+               T end_latitude, T end_longitude);
     /***
      * ### Calculating the distance X and Y between two GPS coordinates
      *
@@ -143,10 +144,10 @@ namespace Toreo {
      * longitude)*.
      *
      * **Arguments**
-     * {double} start_latitude = latitude of point 1
-     * {double} start_longitude = longitude of point 1
-     * {double} end_latitude = latitude of point 2
-     * {double} end_longitude = longitude of point 2
+     * {T} start_latitude = latitude of point 1
+     * {T} start_longitude = longitude of point 1
+     * {T} end_latitude = latitude of point 2
+     * {T} end_longitude = longitude of point 2
      *
      * **Returns**
      * {Visualizer::pointXY<T>} Distance in meters from *start point* to *end point*
@@ -157,12 +158,12 @@ namespace Toreo {
      * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
-    Visualizer::pointXY<T> distances(double start_latitude, double start_longitude,
-                                     double end_latitude, double end_longitude);
+    Visualizer::pointXY<T> distances(T start_latitude, T start_longitude,
+                                     T end_latitude, T end_longitude);
   private:
-    double *latitude_, *longitude_;
+    T *latitude_, *longitude_;
     T null_;
-    double to_radians_, earth_radius_, to_degrees_;
+    T to_radians_, earth_radius_, to_degrees_;
   };
 
   typedef CoordinateConversor<float> CoordinateConversorFloat;

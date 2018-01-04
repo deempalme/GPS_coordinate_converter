@@ -71,16 +71,16 @@ ___
 This will construct this class, if you have an object which is constantly moving you could use its coordinates *(latitude and longitude)* as the parameters in the constructor so, when you call `GPS_to_XY()` or `XY_to_GPS()`, the object's latitude and longitude will be taken as the origin. This does not affect `distance()` or `distances()`.
 ```c++
 template<typename T>
-Toreo::CoordinateConversor<T>::CoordinateConversor(double *latitude = nullptr,
-                                                   double *longitude = nullptr);
+Toreo::CoordinateConversor<T>::CoordinateConversor(T *latitude = nullptr,
+                                                   T *longitude = nullptr);
 ```
 
  &nbsp; **Arguments**
 
 | Type | Name | Description |
 | --- | --- | --- |
-| [`double*`] | **latitude** | Latitude coordinate of the movable object. |
-| [`double*`] | **longitude** | Longitude coordinate of the movable object. |
+| [`T*`] | **latitude** | Latitude coordinate of the movable object. |
+| [`T*`] | **longitude** | Longitude coordinate of the movable object. |
 <br/>
 
 ___
@@ -90,7 +90,7 @@ ___
 
 This function converts GPS **degree** coordinates to distance in meters from the **GPS position** to the **Object position** *(he object's position is the origin)* which was defined in the constructor.
 ```c++
-Visualizer::pointXY<T> GPS_to_XY(double latitude, double longitude);
+Visualizer::pointXY<T> GPS_to_XY(T latitude, T longitude);
 ```
 
 **Mathematical formulas** are as follows:
@@ -101,8 +101,8 @@ Visualizer::pointXY<T> GPS_to_XY(double latitude, double longitude);
 
 | Type | Name | Description |
 | --- | --- | --- |
-| [`double`] | **latitude** | Latitude coordinate to measure. |
-| [`double`] | **longitude** | Longitude coordinate to measure. |
+| [`T`] | **latitude** | Latitude coordinate to measure. |
+| [`T`] | **longitude** | Longitude coordinate to measure. |
 
  &nbsp; **Returns**<br/>
  &nbsp; &nbsp; [`Visualizer::pointXY<T>`] &nbsp; | &nbsp; Position in meters with coordinates **X** and **Y** relative to the map's center defined at the constructor. (see [Types](#D) for more information about the `struct`).
@@ -119,7 +119,7 @@ ___
 
 This function converts **X** and **Y** position *(in meters)* into GPS **degree** coordinates. The X and Y distances must be relative to the Object, the **X axis** is a line pointing east and the **Y axis** is a line pointing towards north and center at the Object position (defined at the constructor).
 ```c++
-Visualizer::pointLL XY_to_GPS(T x, T y);
+Visualizer::pointLL<T> XY_to_GPS(T x, T y);
 ```
 
 **Mathematical formulas** are as follows:
@@ -134,7 +134,7 @@ Visualizer::pointLL XY_to_GPS(T x, T y);
 | [`T`] | **y** | Position **Y** to measure relative to the object defined at the constructor. |
 
  &nbsp; **Returns**<br/>
- &nbsp; &nbsp; [`Visualizer::pointLL`] &nbsp; | &nbsp; Coordinates **latitude** and **longitude**. (see [Types](#D) for more information about the `struct`).
+ &nbsp; &nbsp; [`Visualizer::pointLL<T>`] &nbsp; | &nbsp; Coordinates **latitude** and **longitude**. (see [Types](#D) for more information about the `struct`).
 
  &nbsp; **Errors**<br />
  &nbsp; &nbsp; This will always return `latitude = 0` and `longitude = 0` if the *latitude* and *longitude* were not defined in the constructor.
@@ -148,18 +148,18 @@ ___
 
 This function calculates the **distance** between two GPS points, you must define the **start point** *(latitude, longitude)* and **end point** *(latitude, longitude)*.
 ```c++
-T distance(double start_latitude, double start_longitude,
-           double end_latitude, double end_longitude);
+T distance(T start_latitude, T start_longitude,
+           T end_latitude, T end_longitude);
 ```
 
  &nbsp; **Arguments**
 
 | Type | Name | Description |
 | --- | --- | --- |
-| [`double`] | **start_latitude** | Latitude of point 1. |
-| [`double`] | **start_longitude** | Longitude of point 1. |
-| [`double`] | **end_latitude** | Latitude of point 2. |
-| [`double`] | **end_longitude** | Longitude of point 2. |
+| [`T`] | **start_latitude** | Latitude of point 1. |
+| [`T`] | **start_longitude** | Longitude of point 1. |
+| [`T`] | **end_latitude** | Latitude of point 2. |
+| [`T`] | **end_longitude** | Longitude of point 2. |
 
  &nbsp; **Returns**<br/>
  &nbsp; &nbsp; [`T`] &nbsp; | &nbsp; Distance in meters from *start point* to *end point*.
@@ -176,18 +176,18 @@ ___
 
 This function calculates the **distance X** and **Y** between two GPS points, you must define a **start point** *(latitude, longitude)* and **end point** *(latitude, longitude)*.
 ```c++
-Visualizer::pointXY<T> distances(double start_latitude, double start_longitude,
-                                 double end_latitude, double end_longitude);
+Visualizer::pointXY<T> distances(T start_latitude, T start_longitude,
+                                 T end_latitude, T end_longitude);
 ```
 
  &nbsp; **Arguments**
 
 | Type | Name | Description |
 | --- | --- | --- |
-| [`double`] | **start_latitude** | Latitude of point 1. |
-| [`double`] | **start_longitude** | Longitude of point 1. |
-| [`double`] | **end_latitude** | Latitude of point 2. |
-| [`double`] | **end_longitude** | Longitude of point 2. |
+| [`T`] | **start_latitude** | Latitude of point 1. |
+| [`T`] | **start_longitude** | Longitude of point 1. |
+| [`T`] | **end_latitude** | Latitude of point 2. |
+| [`T`] | **end_longitude** | Longitude of point 2. |
 
  &nbsp; **Returns**<br/>
  &nbsp; &nbsp; [`Visualizer::pointXY<T>`] &nbsp; | &nbsp; Distance in meters from *start point* to *end point* separated in **vector components**. (see [Types](#D) for more information about the `struct`).
@@ -217,12 +217,13 @@ namespace Visualizer {
   };
   
   // Position in degrees
+  template<typename T>
   union pointLL{
     struct{
-      double latitude;  // Latitude coordinate in degrees
-      double longitude; // Longitude coordinate in degrees
+      T latitude;  // Latitude coordinate in degrees
+      T longitude; // Longitude coordinate in degrees
     };
-    double data[2];
+    T data[2];
   };
 }
 ```
@@ -241,13 +242,13 @@ Example:
 
 ```c++
 // Use this:
-double map_center_latitude{0.0};
-double map_center_longitude{0.0};
+float map_center_latitude{0.0};
+float map_center_longitude{0.0};
 Toreo::CoordinateConversotFloat gps_conversor(&map_center_latitude, &map_center_longitude);
 
 // Instead of this:
-double map_center_latitude{0.0};
-double map_center_longitude{0.0};
+float map_center_latitude{0.0};
+float map_center_longitude{0.0};
 Toreo::CoordinateConversot<float> gps_conversor(&map_center_latitude, &map_center_longitude);
 ```
 
@@ -271,8 +272,8 @@ int main(int argc, char *argv[]){
   // ---------------------------- GPS COORDINATE CONVERSOR ------------------------------ //
   // ------------------------------------------------------------------------------------ //
   // Defining the map center (which you could move inside your code at any moment)
-  double map_center_latitude{0.0};
-  double map_center_longitude{0.0};
+  float map_center_latitude{0.0f};
+  float map_center_longitude{0.0f};
 
   // Creating our GPS coordinate conversor object
   Toreo::CoordinateConversor<float> conversor(&map_center_latitude, &map_center_longitude);
@@ -280,7 +281,7 @@ int main(int argc, char *argv[]){
   // -------------------------------------------------------------------------------
   // Converting from coordinates to meters (relative to the map center)
   Visualizer::pointXY<float> point_1;
-  point_1 = conversor.GPS_to_XY(50.774987, 6.085083);
+  point_1 = conversor.GPS_to_XY(50.774987f, 6.085083f);
   // Printing the values
   std::cout << std::setprecision(2) << std::fixed
             << "X: " << point_1.x << "m \n"
@@ -289,24 +290,24 @@ int main(int argc, char *argv[]){
 
   // -------------------------------------------------------------------------------
   // Changing the map center location
-  map_center_latitude = 50.0;
-  map_center_longitude = 6.0;
+  map_center_latitude = 50.0f;
+  map_center_longitude = 6.0f;
 
   // -------------------------------------------------------------------------------
   // Converting from meters to coordinates (relative to the map center)
-  Visualizer::pointLL point_2{conversor.XY_to_GPS(1000.0f, 2000.0f)};
+  Visualizer::pointLL<float> point_2{conversor.XY_to_GPS(1000.0f, 2000.0f)};
   // Printing the values
-  std::cout << std::setprecision(9) << std::fixed
+  std::cout << std::setprecision(7) << std::fixed
             << "Latitude: " << point_2.latitude << "° \n"
             << "Longitude: " << point_2.longitude << "°"
             << std::endl;
 
   // -------------------------------------------------------------------------------
   // Setting the points A and B
-  double start_latitude = 50.774987;
-  double start_longitude{6.085083};
-  double end_latitude{51.774987};
-  double end_longitude = 7.085083;
+  float start_latitude = 50.774987f;
+  float start_longitude{6.085083f};
+  float end_latitude{51.774987f};
+  float end_longitude = 7.085083f;
   // Calculating the distance from point A to B
   float distance{conversor.distance(start_latitude, start_longitude,
                                     end_latitude, end_longitude)};
@@ -319,7 +320,7 @@ int main(int argc, char *argv[]){
   // -------------------------------------------------------------------------------
   // Calculating the distance from point A to B
   Visualizer::pointXY<float> distances{conversor.distances(start_latitude, start_longitude,
-                                                           51.774987, 7.085083)};
+                                                           51.774987f, 7.085083f)};
   // Printing the values
   std::cout << std::setprecision(2) << std::fixed
             << "Distance in X: " << distances.x << "m \n"
