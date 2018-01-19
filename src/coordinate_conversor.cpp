@@ -2,7 +2,8 @@
 
 namespace Toreo {
   template<typename T>
-  CoordinateConversor<T>::CoordinateConversor(T *latitude, T *longitude) :
+  CoordinateConversor<T>::CoordinateConversor(const T *latitude,
+                                              const T *longitude) :
     latitude_(latitude),
     longitude_(longitude),
     null_(static_cast<T>(0.0)),

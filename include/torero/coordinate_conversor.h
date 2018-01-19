@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-#ifndef C_C_S
-#define C_C_S
+#ifndef P_C_XY_LL
+#define P_C_XY_LL
 namespace Visualizer {
   template<typename T>
   union pointXY{
@@ -45,7 +45,7 @@ namespace Toreo {
      * {T*} longitude = Longitude coordinate of the movable object.
      *
      */
-    CoordinateConversor(T *latitude = nullptr, T *longitude = nullptr);
+    CoordinateConversor(const T *latitude = nullptr, const T *longitude = nullptr);
     /***
      * ### Calculating the distance from movable object to the map's origin
      *
@@ -161,7 +161,7 @@ namespace Toreo {
     Visualizer::pointXY<T> distances(T start_latitude, T start_longitude,
                                      T end_latitude, T end_longitude);
   private:
-    T *latitude_, *longitude_;
+    const T *latitude_, *longitude_;
     T null_, ninety_;
     T to_radians_, earth_radius_, to_degrees_;
   };
