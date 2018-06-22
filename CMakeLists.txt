@@ -1,7 +1,7 @@
 #cmake version
 cmake_minimum_required(VERSION 3.1)
 
-#if(NOT DEFINED COORDINATE_LIB)
+if(NOT TARGET ${COORDINATE_LIB})
   #project name
   project(GPS_conversor)
   set(COORDINATE_NAME GPS_conversor)
@@ -31,4 +31,4 @@ cmake_minimum_required(VERSION 3.1)
   include_directories(include)
 
   set_target_properties(${COORDINATE_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-#endif(NOT DEFINED COORDINATE_LIB)
+endif(NOT TARGET ${COORDINATE_LIB})

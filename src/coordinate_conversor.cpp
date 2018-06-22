@@ -14,8 +14,8 @@ namespace Toreo {
   {}
 
   template<typename T>
-  Visualizer::pointXY<T> CoordinateConversor<T>::GPS_to_origin(){
-    Visualizer::pointXY<T> value = { null_, null_ };
+  Visualizer::PointXY<T> CoordinateConversor<T>::GPS_to_origin(){
+    Visualizer::PointXY<T> value = { null_, null_ };
 
     if(latitude_ && longitude_){
       const T latitudeRAD{*latitude_ * to_radians_};
@@ -38,8 +38,32 @@ namespace Toreo {
   }
 
   template<typename T>
-  Visualizer::pointXY<T> CoordinateConversor<T>::GPS_to_XY(T latitude, T longitude){
-    Visualizer::pointXY<T> value = { null_, null_ };
+  Visualizer::PointXY<T> CoordinateConversor<T>::GPS_to_origin(const T latitude,
+                                                               const T longitude){
+    Visualizer::PointXY<T> value = { null_, null_ };
+
+    const T latitudeRAD{latitude * to_radians_};
+    const T longitudeRAD{longitude * to_radians_};
+
+    const T C{std::cos(latitudeRAD)};
+    const T D{std::sin(latitudeRAD)};
+    const T E{std::cos(longitudeRAD)};
+
+    const T c{std::acos(C * E)};
+    const T k{c / std::sin(c)};
+
+    value.x = k * C * E * earth_radius_;
+    value.y = k * D * earth_radius_;
+
+    if(value.x != value.x) value.x = null_;
+    if(value.y != value.y) value.y = null_;
+
+    return value;
+  }
+
+  template<typename T>
+  Visualizer::PointXY<T> CoordinateConversor<T>::GPS_to_XY(T latitude, T longitude){
+    Visualizer::PointXY<T> value = { null_, null_ };
 
     if(latitude_ && longitude_){
       latitude  *= to_radians_;
@@ -67,8 +91,8 @@ namespace Toreo {
   }
 
   template<typename T>
-  Visualizer::pointLL<T> CoordinateConversor<T>::XY_to_GPS(T x, T y){
-    Visualizer::pointLL<T> value = { null_, null_ };
+  Visualizer::PointLL<T> CoordinateConversor<T>::XY_to_GPS(T x, T y){
+    Visualizer::PointLL<T> value = { null_, null_ };
 
     if(latitude_ && longitude_){
       const T x2{x/earth_radius_};
@@ -120,11 +144,11 @@ namespace Toreo {
   }
 
   template<typename T>
-  Visualizer::pointXY<T> CoordinateConversor<T>::distances(T start_latitude,
+  Visualizer::PointXY<T> CoordinateConversor<T>::distances(T start_latitude,
                                                            T start_longitude,
                                                            T end_latitude,
                                                            T end_longitude){
-    Visualizer::pointXY<T> value = { null_, null_ };
+    Visualizer::PointXY<T> value = { null_, null_ };
     start_latitude  *= to_radians_;
     start_longitude *= to_radians_;
     end_latitude    *= to_radians_;
