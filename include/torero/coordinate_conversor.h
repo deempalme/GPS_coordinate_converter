@@ -7,7 +7,7 @@
 #define P_C_XY_LL
 namespace Visualizer {
   template<typename T>
-  union pointXY{
+  union PointXY{
     struct{
       T x; // Position in meters at the X axis (Longitude axis)
       T y; // Position in meters at the Y axis (Latitude axis)
@@ -16,7 +16,7 @@ namespace Visualizer {
   };
 
   template<typename T>
-  union pointLL{
+  union PointLL{
     struct{
       T latitude;  // Latitude coordinate in degrees
       T longitude; // Longitude coordinate in degrees
@@ -53,7 +53,7 @@ namespace Toreo {
      * **constructor** to the **map's origin** (*latitude* and *longitude* equal to *zero*).
      *
      * **Returns**
-     * {Visualizer::pointXY<T>} Position in meters on **X** and **Y** axes relative to the
+     * {Visualizer::PointXY<T>} Position in meters on **X** and **Y** axes relative to the
      * **map's origin** (*latitude* and *longitude* equal to *zero*). (see [Types](#D)
      * for more information about the `struct`).
      *
@@ -62,7 +62,20 @@ namespace Toreo {
      * defined in the constructor.
      *
      */
-    Visualizer::pointXY<T> GPS_to_origin();
+    Visualizer::PointXY<T> GPS_to_origin();
+    /***
+     * ### Calculating the distance from a give GPS coordinates to the map's origin
+     *
+     * This function calculates the distance from the **given GPS coordinates**
+     * to the **map's origin** (*latitude* and *longitude* equal to *zero*).
+     *
+     * **Returns**
+     * {Visualizer::PointXY<T>} Position in meters on **X** and **Y** axes relative to the
+     * **map's origin** (*latitude* and *longitude* equal to *zero*). (see [Types](#D)
+     * for more information about the `struct`).
+     *
+     */
+    Visualizer::PointXY<T> GPS_to_origin(const T latitude, const T longitude);
     /***
      * ### Converting from GPS coordinates to X and Y distances
      *
@@ -79,7 +92,7 @@ namespace Toreo {
      * {T} longitude = Longitude coordinate to measure.
      *
      * **Returns**
-     * {Visualizer::pointXY<T>} Position in meters on **X** and **Y** axes relative to the
+     * {Visualizer::PointXY<T>} Position in meters on **X** and **Y** axes relative to the
      * **map's center** defined at the constructor. (see [Types](#D) for more information
      * about the `struct`).
      *
@@ -88,7 +101,7 @@ namespace Toreo {
      * defined in the constructor.
      *
      */
-    Visualizer::pointXY<T> GPS_to_XY(T latitude, T longitude);
+    Visualizer::PointXY<T> GPS_to_XY(T latitude, T longitude);
     /***
      * ### Converting from X and Y position to GPS coordinates
      * 
@@ -106,7 +119,7 @@ namespace Toreo {
      * {T} y = Position Y to measure relative to the object defined at the constructor.
      *
      * **Returns**
-     * {Visualizer::pointLL<T>} Coordinates **latitude** and **longitude**. (see [Types](#D)
+     * {Visualizer::PointLL<T>} Coordinates **latitude** and **longitude**. (see [Types](#D)
      * for more information about the `struct`).
      *
      * **Errors**
@@ -114,7 +127,7 @@ namespace Toreo {
      * defined in the constructor.
      *
      */
-    Visualizer::pointLL<T> XY_to_GPS(T x, T y);
+    Visualizer::PointLL<T> XY_to_GPS(T x, T y);
     /***
      * ### Calculating the distance between two GPS coordinates
      * 
@@ -150,7 +163,7 @@ namespace Toreo {
      * {T} end_longitude = longitude of point 2
      *
      * **Returns**
-     * {Visualizer::pointXY<T>} Distance in meters from *start point* to *end point*
+     * {Visualizer::PointXY<T>} Distance in meters from *start point* to *end point*
      * separated in **vector components**. (see [Types](#D) for more information
      * about the `struct`).
      *
@@ -158,7 +171,7 @@ namespace Toreo {
      * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
-    Visualizer::pointXY<T> distances(T start_latitude, T start_longitude,
+    Visualizer::PointXY<T> distances(T start_latitude, T start_longitude,
                                      T end_latitude, T end_longitude);
   private:
     const T *latitude_, *longitude_;
