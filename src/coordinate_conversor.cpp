@@ -1,6 +1,6 @@
 #include "torero/coordinate_conversor.h"
 
-namespace Toreo {
+namespace torero {
   template<typename T>
   CoordinateConversor<T>::CoordinateConversor(const T *latitude,
                                               const T *longitude) :
@@ -14,8 +14,8 @@ namespace Toreo {
   {}
 
   template<typename T>
-  Visualizer::PointXY<T> CoordinateConversor<T>::GPS_to_origin(){
-    Visualizer::PointXY<T> value = { null_, null_ };
+  torero::PointXY<T> CoordinateConversor<T>::GPS_to_origin(){
+    torero::PointXY<T> value = { null_, null_ };
 
     if(latitude_ && longitude_){
       const T latitudeRAD{*latitude_ * to_radians_};
@@ -38,9 +38,9 @@ namespace Toreo {
   }
 
   template<typename T>
-  Visualizer::PointXY<T> CoordinateConversor<T>::GPS_to_origin(const T latitude,
+  torero::PointXY<T> CoordinateConversor<T>::GPS_to_origin(const T latitude,
                                                                const T longitude){
-    Visualizer::PointXY<T> value = { null_, null_ };
+    torero::PointXY<T> value = { null_, null_ };
 
     const T latitudeRAD{latitude * to_radians_};
     const T longitudeRAD{longitude * to_radians_};
@@ -62,8 +62,8 @@ namespace Toreo {
   }
 
   template<typename T>
-  Visualizer::PointXY<T> CoordinateConversor<T>::GPS_to_XY(T latitude, T longitude){
-    Visualizer::PointXY<T> value = { null_, null_ };
+  torero::PointXY<T> CoordinateConversor<T>::GPS_to_XY(T latitude, T longitude){
+    torero::PointXY<T> value = { null_, null_ };
 
     if(latitude_ && longitude_){
       latitude  *= to_radians_;
@@ -91,8 +91,8 @@ namespace Toreo {
   }
 
   template<typename T>
-  Visualizer::PointLL<T> CoordinateConversor<T>::XY_to_GPS(T x, T y){
-    Visualizer::PointLL<T> value = { null_, null_ };
+  torero::PointLL<T> CoordinateConversor<T>::XY_to_GPS(T x, T y){
+    torero::PointLL<T> value = { null_, null_ };
 
     if(latitude_ && longitude_){
       const T x2{x/earth_radius_};
@@ -144,11 +144,11 @@ namespace Toreo {
   }
 
   template<typename T>
-  Visualizer::PointXY<T> CoordinateConversor<T>::distances(T start_latitude,
+  torero::PointXY<T> CoordinateConversor<T>::distances(T start_latitude,
                                                            T start_longitude,
                                                            T end_latitude,
                                                            T end_longitude){
-    Visualizer::PointXY<T> value = { null_, null_ };
+    torero::PointXY<T> value = { null_, null_ };
     start_latitude  *= to_radians_;
     start_longitude *= to_radians_;
     end_latitude    *= to_radians_;
