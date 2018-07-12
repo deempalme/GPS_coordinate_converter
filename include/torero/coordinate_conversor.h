@@ -5,7 +5,7 @@
 
 #ifndef P_C_XY_LL
 #define P_C_XY_LL
-namespace Visualizer {
+namespace torero {
   template<typename T>
   union PointXY{
     struct{
@@ -26,7 +26,7 @@ namespace Visualizer {
 }
 #endif
 
-namespace Toreo {
+namespace torero {
   template<typename T>
   class CoordinateConversor
   {
@@ -53,7 +53,7 @@ namespace Toreo {
      * **constructor** to the **map's origin** (*latitude* and *longitude* equal to *zero*).
      *
      * **Returns**
-     * {Visualizer::PointXY<T>} Position in meters on **X** and **Y** axes relative to the
+     * {torero::PointXY<T>} Position in meters on **X** and **Y** axes relative to the
      * **map's origin** (*latitude* and *longitude* equal to *zero*). (see [Types](#D)
      * for more information about the `struct`).
      *
@@ -62,7 +62,7 @@ namespace Toreo {
      * defined in the constructor.
      *
      */
-    Visualizer::PointXY<T> GPS_to_origin();
+    torero::PointXY<T> GPS_to_origin();
     /***
      * ### Calculating the distance from a give GPS coordinates to the map's origin
      *
@@ -70,12 +70,12 @@ namespace Toreo {
      * to the **map's origin** (*latitude* and *longitude* equal to *zero*).
      *
      * **Returns**
-     * {Visualizer::PointXY<T>} Position in meters on **X** and **Y** axes relative to the
+     * {torero::PointXY<T>} Position in meters on **X** and **Y** axes relative to the
      * **map's origin** (*latitude* and *longitude* equal to *zero*). (see [Types](#D)
      * for more information about the `struct`).
      *
      */
-    Visualizer::PointXY<T> GPS_to_origin(const T latitude, const T longitude);
+    torero::PointXY<T> GPS_to_origin(const T latitude, const T longitude);
     /***
      * ### Converting from GPS coordinates to X and Y distances
      *
@@ -92,7 +92,7 @@ namespace Toreo {
      * {T} longitude = Longitude coordinate to measure.
      *
      * **Returns**
-     * {Visualizer::PointXY<T>} Position in meters on **X** and **Y** axes relative to the
+     * {torero::PointXY<T>} Position in meters on **X** and **Y** axes relative to the
      * **map's center** defined at the constructor. (see [Types](#D) for more information
      * about the `struct`).
      *
@@ -101,7 +101,7 @@ namespace Toreo {
      * defined in the constructor.
      *
      */
-    Visualizer::PointXY<T> GPS_to_XY(T latitude, T longitude);
+    torero::PointXY<T> GPS_to_XY(T latitude, T longitude);
     /***
      * ### Converting from X and Y position to GPS coordinates
      * 
@@ -119,7 +119,7 @@ namespace Toreo {
      * {T} y = Position Y to measure relative to the object defined at the constructor.
      *
      * **Returns**
-     * {Visualizer::PointLL<T>} Coordinates **latitude** and **longitude**. (see [Types](#D)
+     * {torero::PointLL<T>} Coordinates **latitude** and **longitude**. (see [Types](#D)
      * for more information about the `struct`).
      *
      * **Errors**
@@ -127,7 +127,7 @@ namespace Toreo {
      * defined in the constructor.
      *
      */
-    Visualizer::PointLL<T> XY_to_GPS(T x, T y);
+    torero::PointLL<T> XY_to_GPS(T x, T y);
     /***
      * ### Calculating the distance between two GPS coordinates
      * 
@@ -163,7 +163,7 @@ namespace Toreo {
      * {T} end_longitude = longitude of point 2
      *
      * **Returns**
-     * {Visualizer::PointXY<T>} Distance in meters from *start point* to *end point*
+     * {torero::PointXY<T>} Distance in meters from *start point* to *end point*
      * separated in **vector components**. (see [Types](#D) for more information
      * about the `struct`).
      *
@@ -171,8 +171,8 @@ namespace Toreo {
      * This will return strange values if you do not introduces proper GPS coordinates.
      *
      */
-    Visualizer::PointXY<T> distances(T start_latitude, T start_longitude,
-                                     T end_latitude, T end_longitude);
+    torero::PointXY<T> distances(T start_latitude, T start_longitude,
+                                 T end_latitude, T end_longitude);
   private:
     const T *latitude_, *longitude_;
     T null_, ninety_;
