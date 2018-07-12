@@ -71,8 +71,8 @@ ___
 This will construct this class, if you have an object which is constantly moving you could use its coordinates *(latitude and longitude)* as the parameters in the constructor so, when you call `GPS_to_XY()` or `XY_to_GPS()`, the object's latitude and longitude will be taken as the origin. This does not affect `distance()` or `distances()`.
 ```c++
 template<typename T>
-Toreo::CoordinateConversor<T>::CoordinateConversor(T *latitude = nullptr,
-                                                   T *longitude = nullptr);
+torero::CoordinateConversor<T>::CoordinateConversor(T *latitude = nullptr,
+                                                    T *longitude = nullptr);
 ```
 
  &nbsp; **Arguments**
@@ -90,7 +90,7 @@ ___
 
 This function converts GPS **degree** coordinates to distance in meters from the **GPS position** to the **Object position** *(he object's position is the origin)* which was defined in the constructor.
 ```c++
-Visualizer::pointXY<T> GPS_to_XY(T latitude, T longitude);
+torero::pointXY<T> GPS_to_XY(T latitude, T longitude);
 ```
 
 **Mathematical formulas** are as follows:
@@ -105,7 +105,7 @@ Visualizer::pointXY<T> GPS_to_XY(T latitude, T longitude);
 | [`T`] | **longitude** | Longitude coordinate to measure. |
 
  &nbsp; **Returns**<br/>
- &nbsp; &nbsp; [`Visualizer::pointXY<T>`] &nbsp; | &nbsp; Position in meters with coordinates **X** and **Y** relative to the map's center defined at the constructor. (see [Types](#D) for more information about the `struct`).
+ &nbsp; &nbsp; [`torero::pointXY<T>`] &nbsp; | &nbsp; Position in meters with coordinates **X** and **Y** relative to the map's center defined at the constructor. (see [Types](#D) for more information about the `struct`).
 
  &nbsp; **Errors**<br />
  &nbsp; &nbsp; This will always return x = 0 and y = 0 if the *latitude* and *longitude* were not defined in the constructor.
@@ -119,7 +119,7 @@ ___
 
 This function converts **X** and **Y** position *(in meters)* into GPS **degree** coordinates. The X and Y distances must be relative to the Object, the **X axis** is a line pointing east and the **Y axis** is a line pointing towards north and center at the Object position (defined at the constructor).
 ```c++
-Visualizer::pointLL<T> XY_to_GPS(T x, T y);
+torero::pointLL<T> XY_to_GPS(T x, T y);
 ```
 
 **Mathematical formulas** are as follows:
@@ -134,7 +134,7 @@ Visualizer::pointLL<T> XY_to_GPS(T x, T y);
 | [`T`] | **y** | Position **Y** to measure relative to the object defined at the constructor. |
 
  &nbsp; **Returns**<br/>
- &nbsp; &nbsp; [`Visualizer::pointLL<T>`] &nbsp; | &nbsp; Coordinates **latitude** and **longitude**. (see [Types](#D) for more information about the `struct`).
+ &nbsp; &nbsp; [`torero::pointLL<T>`] &nbsp; | &nbsp; Coordinates **latitude** and **longitude**. (see [Types](#D) for more information about the `struct`).
 
  &nbsp; **Errors**<br />
  &nbsp; &nbsp; This will always return `latitude = 0` and `longitude = 0` if the *latitude* and *longitude* were not defined in the constructor.
@@ -176,8 +176,8 @@ ___
 
 This function calculates the **distance X** and **Y** between two GPS points, you must define a **start point** *(latitude, longitude)* and **end point** *(latitude, longitude)*.
 ```c++
-Visualizer::pointXY<T> distances(T start_latitude, T start_longitude,
-                                 T end_latitude, T end_longitude);
+torero::pointXY<T> distances(T start_latitude, T start_longitude,
+                             T end_latitude, T end_longitude);
 ```
 
  &nbsp; **Arguments**
@@ -190,7 +190,7 @@ Visualizer::pointXY<T> distances(T start_latitude, T start_longitude,
 | [`T`] | **end_longitude** | Longitude of point 2. |
 
  &nbsp; **Returns**<br/>
- &nbsp; &nbsp; [`Visualizer::pointXY<T>`] &nbsp; | &nbsp; Distance in meters from *start point* to *end point* separated in **vector components**. (see [Types](#D) for more information about the `struct`).
+ &nbsp; &nbsp; [`torero::pointXY<T>`] &nbsp; | &nbsp; Distance in meters from *start point* to *end point* separated in **vector components**. (see [Types](#D) for more information about the `struct`).
 
  &nbsp; **Errors**<br />
  &nbsp; &nbsp; This will return strange values if you do not introduces proper GPS coordinates.
@@ -205,7 +205,7 @@ Visualizer::pointXY<T> distances(T start_latitude, T start_longitude,
 There is two different types of **structures**:
 
 ```c++
-namespace Visualizer {
+namespace torero {
   // Position in meters
   template<typename T>
   union pointXY{
@@ -228,10 +228,10 @@ namespace Visualizer {
 }
 ```
 
-You could directly **choose a type** for the coordinate conversor using the following lines:
+You could directly **choose a type** for the coordinate conversor using the following type definitions:
 
 ```c++
-namespace Toreo {
+namespace torero {
   typedef CoordinateConversor<float> CoordinateConversorFloat;
   typedef CoordinateConversor<double> CoordinateConversorDouble;
   typedef CoordinateConversor<long double> CoordinateConversorLong;
@@ -244,12 +244,12 @@ Example:
 // Use this:
 float map_center_latitude{0.0f};
 float map_center_longitude{0.0f};
-Toreo::CoordinateConversotFloat gps_conversor(&map_center_latitude, &map_center_longitude);
+torero::CoordinateConversotFloat gps_conversor(&map_center_latitude, &map_center_longitude);
 
 // Instead of this:
 float map_center_latitude{0.0f};
 float map_center_longitude{0.0f};
-Toreo::CoordinateConversot<float> gps_conversor(&map_center_latitude, &map_center_longitude);
+torero::CoordinateConversot<float> gps_conversor(&map_center_latitude, &map_center_longitude);
 ```
 
 <br/>
@@ -276,11 +276,11 @@ int main(int argc, char *argv[]){
   float map_center_longitude{0.0f};
 
   // Creating our GPS coordinate conversor object
-  Toreo::CoordinateConversor<float> conversor(&map_center_latitude, &map_center_longitude);
+  torero::CoordinateConversor<float> conversor(&map_center_latitude, &map_center_longitude);
 
   // -------------------------------------------------------------------------------
   // Converting from coordinates to meters (relative to the map center)
-  Visualizer::pointXY<float> point_1;
+  torero::pointXY<float> point_1;
   point_1 = conversor.GPS_to_XY(50.774987f, 6.085083f);
   // Printing the values
   std::cout << std::setprecision(2) << std::fixed
@@ -295,7 +295,7 @@ int main(int argc, char *argv[]){
 
   // -------------------------------------------------------------------------------
   // Converting from meters to coordinates (relative to the map center)
-  Visualizer::pointLL<float> point_2{conversor.XY_to_GPS(1000.0f, 2000.0f)};
+  torero::pointLL<float> point_2{conversor.XY_to_GPS(1000.0f, 2000.0f)};
   // Printing the values
   std::cout << std::setprecision(7) << std::fixed
             << "Latitude: " << point_2.latitude << "° \n"
@@ -319,8 +319,8 @@ int main(int argc, char *argv[]){
 
   // -------------------------------------------------------------------------------
   // Calculating the distance from point A to B
-  Visualizer::pointXY<float> distances{conversor.distances(start_latitude, start_longitude,
-                                                           51.774987f, 7.085083f)};
+  torero::pointXY<float> distances{conversor.distances(start_latitude, start_longitude,
+                                                       51.774987f, 7.085083f)};
   // Printing the values
   std::cout << std::setprecision(2) << std::fixed
             << "Distance in X: " << distances.x << "m \n"
