@@ -89,9 +89,9 @@ namespace ramrod {
       ramrod::point_xy<T> distances(T start_latitude, T start_longitude,
                                     T end_latitude, T end_longitude);
       /***
-       * ### Calculating the distance from movable object to the map's origin
+       * ### Calculating the distance from map's center to the map's origin
        *
-       * This function calculates the distance from the **movable object** defined at the
+       * This function calculates the distance from the **map's center** defined at the
        * **constructor** to the **map's origin** (*latitude* and *longitude* equal to *zero*).
        *
        * @returns
@@ -118,12 +118,7 @@ namespace ramrod {
        * ### Converting from GPS coordinates to X and Y distances
        *
        * This function converts GPS **degree** coordinates to distance in meters from the
-       * **GPS position** to the **Object position** *(he object's position is the origin)*
-       * which was defined in the constructor.
-       *
-       * Mathematical formulas are as follows:
-       *  * `x = longitude_to_meters - Object_longitude_to_meters`
-       *  * `y = latitude_to_meters - Object_latitude_to_meters`
+       * **GPS position** to the **map's center** which was defined in the constructor.
        *
        * @parameters
        * {T} latitude = Latitude coordinate to measure.
@@ -140,17 +135,13 @@ namespace ramrod {
        * ### Converting from X and Y position to GPS coordinates
        * 
        * This function converts **X** and **Y** position *(in meters)* into GPS **degree**
-       * coordinates. The X and Y distances must be relative to the Object, the **X axis**
-       * is a line pointing east and the **Y axis** is a line pointing towards north and center
-       * at the Object position (defined at the constructor).
-       *
-       * Mathematical formulas are as follows:
-       *  * `latitude = to_GPS_coordinate(Object_latitude_to_meters + y)`
-       *  * `longitude = to_GPS_coordinate(Object_longitude_to_meters + x)`
+       * coordinates. The X and Y distances must be relative to the map's center, the **X axis**
+       * is a line pointing east and the **Y axis** is a line pointing towards north and map's
+       * center (defined at the constructor).
        *
        * @parameters
-       * {T} x = Position X to measure relative to the object defined at the constructor.
-       * {T} y = Position Y to measure relative to the object defined at the constructor.
+       * {T} x = Position X to measure relative to the map's center defined at the constructor.
+       * {T} y = Position Y to measure relative to the map's center defined at the constructor.
        *
        * @returns
        * {ramrod::point_ll<T>} Coordinates **latitude** and **longitude**. (see [Types](#D)
