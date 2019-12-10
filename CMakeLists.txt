@@ -1,34 +1,41 @@
 #cmake version
 cmake_minimum_required(VERSION 3.1)
 
-if(NOT TARGET ${COORDINATE_LIB})
+if(NOT TARGET ${COORDINATE_LIBRARIES})
   #project name
-  project(GPS_conversor)
-  set(COORDINATE_NAME GPS_conversor)
+  project(GPS_conversor
+  VERSION 1.0.0
+  DESCRIPTION "GPS coordinate conversor"
+  LANGUAGES CXX C
+)
 
-  # As moc files are generated in the binary dir, tell CMake
-  # to always look for includes there:
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  # compatibility with c++14
-  set(CMAKE_CXX_STANDARD 14)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-
-  set(COORDINATE_DIRS
+  set(COORDINATE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/include
 
     CACHE INTERNAL ""
   )
-  set(COORDINATE_LIB ${COORDINATE_NAME} CACHE INTERNAL "")
+  set(COORDINATE_LIBRARIES ${PROJECT_NAME} CACHE INTERNAL "")
 
   #add every file to the executable
-  add_library(${COORDINATE_NAME}
-    include/torero/coordinate_conversor.h
-    src/coordinate_conversor.cpp
+  add_library(${PROJECT_NAME})
+
+  target_sources(${PROJECT_NAME}
+    PRIVATE
+      include/ramrod/gps/coordinate_conversor.h
+      include/ramrod/gps/types.h
+      src/ramrod/gps/coordinate_conversor.cpp
   )
 
-  include_directories(include)
+  target_include_directories(${PROJECT_NAME}
+    PRIVATE
+      include
+  )
 
-  set_target_properties(${COORDINATE_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-endif(NOT TARGET ${COORDINATE_LIB})
+  set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+      CXX_STANDARD 11
+      CXX_STANDARD_REQUIRED yes
+      CXX_EXTENSIONS no
+  )
+endif(NOT TARGET ${COORDINATE_LIBRARIES})
