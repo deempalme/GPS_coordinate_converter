@@ -1,1 +1,8 @@
-*.user
+# Ignores Qt configuration file
+*.user*
+
+# Ignores compilation folder
+build/*
+
+# Ignores VSCode configuration folder
+.vscode/*
