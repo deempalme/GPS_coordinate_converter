@@ -109,6 +109,7 @@ bool center(const T *latitude, const T *longitude);
 <br/>
 
  &nbsp; **Returns**
+
  | Type | Description |
  | --- | --- |
  | `bool` | `false` if latitude or longitude are `nullptr`. |
@@ -125,6 +126,7 @@ ramrod::point_ll<T> center();
 ```
 
  &nbsp; **Returns**
+
  | Type | Description |
  | --- | --- |
  | `ramrod::point_ll<T>` | GPS coordinates of the map's center. |
@@ -142,6 +144,7 @@ ramrod::point_xy<T> gps_to_origin();
 ```
 
  &nbsp; **Returns**
+
  | Type | Description |
  | --- | --- |
  | `ramrod::point_xy<T>` | Position in meters on **X** and **Y** axes relative to the **map's origin** (*latitude* and *longitude* equal to *zero*). (see [Types](#D) for more information about the `struct`). |
@@ -159,6 +162,7 @@ ramrod::point_xy<T> gps_to_origin(const T latitude, const T longitude);
 ```
 
  &nbsp; **Returns**
+
  | Type | Description |
  | --- | --- |
  | `ramrod::point_xy<T>` | Position in meters on **X** and **Y** axes relative to the **map's origin** (*latitude* and *longitude* equal to *zero*). (see [Types](#D) for more information about the `struct`). |
@@ -182,6 +186,7 @@ ramrod::point_xy<T> gps_to_xy(T latitude, T longitude);
 | `T` | **longitude** | Longitude coordinate to measure. |
 
  &nbsp; **Returns**
+
  | Type | Description |
  | --- | --- |
  | `ramrod::point_xy<T>` | Position in meters with coordinates **X** and **Y** relative to the map's center defined at the constructor. (see [Types](#D) for more information about the `struct`). |
@@ -206,6 +211,7 @@ ramrod::point_ll<T> xy_to_gps(T x, T y);
 | `T` | **y** | Position **Y** to measure relative to the map'S center defined at the constructor. |
 
  &nbsp; **Returns**
+
  | Type | Description |
  | --- | --- |
  | `ramrod::point_ll<T>` | Coordinates **latitude** and **longitude**. (see [Types](#D) for more information about the `struct`). |
@@ -233,6 +239,7 @@ T distance(T start_latitude, T start_longitude,
 | `T` | **end_longitude** | Longitude of point 2. |
 
  &nbsp; **Returns**
+
  | Type | Description |
  | --- | --- |
  | `T` | Distance in meters from *start point* to *end point*. |
@@ -260,6 +267,7 @@ ramrod::point_xy<T> distances(T start_latitude, T start_longitude,
 | `T` | **end_longitude** | Longitude of point 2. |
 
  &nbsp; **Returns**
+ 
  | Type | Description |
  | --- | --- |
  | `ramrod::point_xy<T>` | Distance in meters from *start point* to *end point* separated in **vector components**. (see [Types](#D) for more information about the `struct`). |
