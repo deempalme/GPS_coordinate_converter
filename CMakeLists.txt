@@ -4,10 +4,10 @@ cmake_minimum_required(VERSION 3.1)
 if(NOT TARGET ${COORDINATE_LIBRARIES})
   #project name
   project(GPS_conversor
-  VERSION 1.0.0
-  DESCRIPTION "GPS coordinate conversor"
-  LANGUAGES CXX C
-)
+    VERSION 1.0.0
+    DESCRIPTION "GPS coordinate conversor"
+    LANGUAGES CXX C
+  )
 
   set(COORDINATE_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}
